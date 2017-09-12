@@ -33,55 +33,20 @@
 
 <h1>Grid Game Simulation</h1>
 
-<p>Select the number of rows:</p>
-<select id="rowSelect">
-	<option value="5rows">5</option>
-    <option value="6rows">6</option>
-    <option value="7rows">7</option>
-    <option value="8rows">8</option>
-    <option value="9rows">9</option>
-    <option value="10rows">10</option>
-    <option value="11rows">11</option>
-    <option value="12rows">12</option>
-    <option value="13rows">13</option>
-    <option value="14rows">14</option>
-    <option value="15rows">15</option>
-    <option value="16rows">16</option>
-    <option value="17rows">17</option>
-    <option value="18rows">18</option>
-    <option value="19rows">19</option>
-    <option value="20rows">20</option>
-</select>
+<p>This program simulates a grid-based board game where two opposing pieces (red and blue)
+start in opposing corners and randomly move around the board in lateral directions until
+one or the other piece reaches the corner opposite from where it started, or 1 million moves have occurred.
+Any time a piece lands on its opponent, the opposing piece immediately returns to its starting space.
+Once the game ends, a winner (or lose condition) is determined, and game statistics are displayed.</p>
 
-<p>Select the number of columns:</p>
-<select id="colSelect">
-	<option value="5cols">5</option>
-    <option value="6cols">6</option>
-    <option value="7cols">7</option>
-    <option value="8cols">8</option>
-    <option value="9cols">9</option>
-    <option value="10cols">10</option>
-    <option value="11cols">11</option>
-    <option value="12cols">12</option>
-    <option value="13cols">13</option>
-    <option value="14cols">14</option>
-    <option value="15cols">15</option>
-    <option value="16cols">16</option>
-    <option value="17cols">17</option>
-    <option value="18cols">18</option>
-    <option value="19cols">19</option>
-    <option value="20cols">20</option>
-</select>
 
-</br>
-</br>
 <button onClick="playGame()">Play the Game!</button>
 
 </br>
 </br>
 <canvas id="gameBoard" width="0" height="0"></canvas>
 <p id="moveCount"></p>
-<p id="markerPosition"></p>
+<p id="redMarkerPosition"></p>
 <p id="gameResult"></p>
 <p id="maxTouches"></p>
 <p id="minTouches"></p>
@@ -89,17 +54,13 @@
 
 <script>
 // Variables
-// Row and column select tags from User
-var rowSelect = document.getElementById("rowSelect");
-var colSelect = document.getElementById("colSelect");
-// Grid size variables for rows and columns
-var numRows = rowSelect.options[rowSelect.selectedIndex].text;
-var numCols = colSelect.options[colSelect.selectedIndex].text;
-var runSpeed = 500/((numRows*numCols)/10);
+var numRows = 10;
+var numCols = 10;
+var runSpeed = 250;
 // Current coordinates of the marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
-var posX = 0;
-var posY = numCols-1;
+var redPosX = 0;
+var redPosY = numCols-1;
 // Total number of moves taken; will increment by +1 each cycle.
 var count = 0;
 // Starting grid touch counts; one cell will increment by +1 each cycle.
@@ -153,7 +114,7 @@ resetGame();
 // Create the board
 drawGrid(numRows, numCols);
 // Program execution loop; This loop should loop a maximum of 1,000,000 times
-// before terminating. Either the marker will reach (9,9), or the count will reach
+// before terminating. Either the marker will reach (numRows-1, numCols-1), or the count will reach
 // 1000001.
 moveMarker();
 calcMax();
@@ -171,8 +132,8 @@ function drawGrid(rows, cols){
     gameBoard.height = rows*21+1;
     
 	
-	boardMaker.strokeStyle = "maroon";
-	boardMaker.fillStyle = "maroon";
+	boardMaker.strokeStyle = "purple";
+	boardMaker.fillStyle = "purple";
 	boardMaker.fillRect(0, 0, 21*cols+1, 21*rows+1);
 	boardMaker.stroke();
     
@@ -182,12 +143,12 @@ function drawGrid(rows, cols){
         
 			// Even numbered tiles
 			if((x+y)%2 == 0){
-			boardMaker.fillStyle = "darkblue";
+			boardMaker.fillStyle = "darkgreen";
 			}
             
 			// Odd numbered tiles
 			else{
-				boardMaker.fillStyle = "black";
+				boardMaker.fillStyle = "darkgoldenrod";
 			}
 			boardMaker.fillRect(1+x*21, 1+y*21, 20, 20);
 		}
@@ -200,7 +161,7 @@ function drawGrid(rows, cols){
 function drawMarker(){
     // Place red marker on new tile
     boardMaker.fillStyle = "red";
-	boardMaker.fillRect(1+posX*21, 1+posY*21, 20, 20);
+	boardMaker.fillRect(1+redPosX*21, 1+redPosY*21, 20, 20);
 }// End drawMarker()
 // moveMarker()
 // Purpose: Simulates random movement of the red marker on the grid.
@@ -221,27 +182,27 @@ function moveMarker(){
 	switch (direction)
 	{
 		case 0: // up
-			if(posY + distance < numRows)
+			if(redPosY + distance < numRows)
 			{
-				posY += distance; // STEP 4: Move the marker to the new position.
+				redPosY += distance; // STEP 4: Move the marker to the new position.
 			}
 			break;
 		case 1: // down
-			if(posY - distance >= 0)
+			if(redPosY - distance >= 0)
 			{
-				posY -= distance; // STEP 4: Move the marker to the new position.
+				redPosY -= distance; // STEP 4: Move the marker to the new position.
 			}
 			break;
 		case 2: // right
-			if(posX + distance < numCols)
+			if(redPosX + distance < numCols)
 			{
-				posX += distance; // STEP 4: Move the marker to the new position.
+				redPosX += distance; // STEP 4: Move the marker to the new position.
 			}
 			break;
 		case 3: // left
-			if(posX - distance >= 0)
+			if(redPosX - distance >= 0)
 			{
-				posX -= distance; // STEP 4: Move the marker to the new position.
+				redPosX -= distance; // STEP 4: Move the marker to the new position.
 			}
 			break;
 		default:
@@ -249,7 +210,7 @@ function moveMarker(){
 	}
 	
 	// Increment the touch count at the marker's current position on the grid.
-	grid[posX][posY]++;
+	grid[redPosX][redPosY]++;
     // Increment the counter
     count++;
     // Update the board and information
@@ -263,11 +224,11 @@ function updateBoard(){
 	// Display the number of moves taken during this game.
 	document.getElementById("moveCount").innerHTML = "Number of moves taken: " + count;
 	// Display the coordinates of the marker at the end of the game.
-	document.getElementById("markerPosition").innerHTML = "Marker position: (" + posX + ',' + posY + ')';
-	// Display "You win!" or "No steps left!" depending on the end state of the game.
-	if(count <= 1000000 && posX == numCols-1 && posY == 0)
+	document.getElementById("redMarkerPosition").innerHTML = "Red marker position: (" + redPosX + ',' + redPosY + ')';
+	// Display "Red wins!" or "Blue wins!" or "No steps left!" depending on the end state of the game.
+	if(count <= 1000000 && redPosX == numCols-1 && redPosY == 0)
 	{
-		document.getElementById("gameResult").innerHTML = "You win!";
+		document.getElementById("gameResult").innerHTML = "Red wins!";
 	}
 	else if(count > 1000000)
 	{
@@ -292,7 +253,7 @@ function updateBoard(){
 	drawMarker();
 	
 	// Check for win/lose condition, call moveMarker() to continue game if win/lose condition not met.
-	if(count <= 1000000 && (posX != numCols-1 || posY != 0)){
+	if(count <= 1000000 && (redPosX != numCols-1 || redPosY != 0)){
     	setTimeout(function(){ moveMarker(); },(runSpeed*count/(count+1)));
     }
 }// End updateBoard()
@@ -302,16 +263,11 @@ function updateBoard(){
 // Outputs: none
 function resetGame(){
 // Variables
-// Row and column select tags from User
-rowSelect = document.getElementById("rowSelect");
-colSelect = document.getElementById("colSelect");
-// Grid size variables for rows and columns
-numRows = rowSelect.options[rowSelect.selectedIndex].text;
-numCols = colSelect.options[colSelect.selectedIndex].text;
+
 // Current coordinates of the marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
-posX = 0;
-posY = numCols-1;
+redPosX = 0;
+redPosY = numCols-1;
 // Total number of moves taken; will increment by +1 each cycle.
 count = 0;
 // Starting grid touch counts; one cell will increment by +1 each cycle.
