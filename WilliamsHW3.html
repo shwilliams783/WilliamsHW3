@@ -57,35 +57,35 @@ Once the game ends, a winner (or lose condition) is determined, and game statist
 var numRows = 10;
 var numCols = 10;
 var runSpeed = 250;
-// Current coordinates of the marker; one of these values will
+// Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
 var redPosX = 0;
 var redPosY = numCols-1;
-// Total number of moves taken; will increment by +1 each cycle.
+
+// Current coordinates of the blue marker; one of these values will
+// change by an integer from [-2,2] each cycle (most commonly 0).
+var bluePosX = numRows-1;
+var bluePosY = 0;
+
+
+// Total number of total moves, red moves, and blue moves taken; will increment by +1 each cycle or colored cycle.
 var count = 0;
+var redCount = 0;
+var blueCount = 0;
+
 // Starting grid touch counts; one cell will increment by +1 each cycle.
 var grid =	[
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			]
 			
 // The current maximum number of times any given cell in the grid has been touched.
 var max = 0;
@@ -116,7 +116,7 @@ drawGrid(numRows, numCols);
 // Program execution loop; This loop should loop a maximum of 1,000,000 times
 // before terminating. Either the marker will reach (numRows-1, numCols-1), or the count will reach
 // 1000001.
-moveMarker();
+moveRedMarker();
 calcMax();
 calcMin();
 // Display the number of moves taken during this game.
@@ -154,21 +154,23 @@ function drawGrid(rows, cols){
 		}
 	}
 }// End drawGrid()
-// drawMarker()
+
+// drawRedMarker()
 // Purpose: This function updates the canvas with the current status of the game marker, represented by a red square.
 // Inputs: none
 // Outputs: none
-function drawMarker(){
+function drawRedMarker(){
     // Place red marker on new tile
     boardMaker.fillStyle = "red";
 	boardMaker.fillRect(1+redPosX*21, 1+redPosY*21, 20, 20);
-}// End drawMarker()
-// moveMarker()
+}// End drawRedMarker()
+
+// moveRedMarker()
 // Purpose: Simulates random movement of the red marker on the grid.
 // Calls updateBoard() to update the game state in perceivable time.
 // Inputs: none
 // Outputs: none
-function moveMarker(){
+function moveRedMarker(){
 	
     // STEP 1: Randomly assign 0, 1, 2, or 3 to direction; these will correspond to
 	// up, down, right, or left movement.
@@ -215,7 +217,71 @@ function moveMarker(){
     count++;
     // Update the board and information
     updateBoard();
-}// End moveMarker()
+}// End moveRedMarker()
+
+// drawBlueMarker()
+// Purpose: This function updates the canvas with the current status of the game marker, represented by a blue square.
+// Inputs: none
+// Outputs: none
+function drawBlueMarker(){
+    // Place blue marker on new tile
+    boardMaker.fillStyle = "blue";
+	boardMaker.fillRect(1+bluePosX*21, 1+bluePosY*21, 20, 20);
+}// End drawBlueMarker()
+// moveBlueMarker()
+// Purpose: Simulates random movement of the blue marker on the grid.
+// Calls updateBoard() to update the game state in perceivable time.
+// Inputs: none
+// Outputs: none
+function moveBlueMarker(){
+	
+    // STEP 1: Randomly assign 0, 1, 2, or 3 to direction; these will correspond to
+	// up, down, right, or left movement.
+	direction = Math.floor((Math.random()*4));
+	
+	// STEP 2: Randomly assign 0, 1, or 2 steps to distance.
+	distance = Math.floor((Math.random()*3));
+	
+	// STEP 3: Attempt to move the marker that direction and distance within the grid
+	// If the new position would be invalid, do not move the marker.
+	switch (direction)
+	{
+		case 0: // up
+			if(bluePosY + distance < numRows)
+			{
+				bluePosY += distance; // STEP 4: Move the marker to the new position.
+			}
+			break;
+		case 1: // down
+			if(bluePosY - distance >= 0)
+			{
+				bluePosY -= distance; // STEP 4: Move the marker to the new position.
+			}
+			break;
+		case 2: // right
+			if(bluePosX + distance < numCols)
+			{
+				bluePosX += distance; // STEP 4: Move the marker to the new position.
+			}
+			break;
+		case 3: // left
+			if(bluePosX - distance >= 0)
+			{
+				bluePosX -= distance; // STEP 4: Move the marker to the new position.
+			}
+			break;
+		default:
+			break;
+	}
+	
+	// Increment the touch count at the marker's current position on the grid.
+	grid[bluePosX][bluePosY]++;
+    // Increment the counter
+    count++;
+    // Update the board and information
+    updateBoard();
+}// End moveBlueMarker()
+
 // updateBoard()
 // Purpose: graphically updates the UI in real time
 // Inputs: none
@@ -250,11 +316,21 @@ function updateBoard(){
 	
 	//Update the game board graphics
     drawGrid(numRows, numCols);
-	drawMarker();
+	drawRedMarker();
+	drawBlueMarker();
 	
-	// Check for win/lose condition, call moveMarker() to continue game if win/lose condition not met.
-	if(count <= 1000000 && (redPosX != numCols-1 || redPosY != 0)){
-    	setTimeout(function(){ moveMarker(); },(runSpeed*count/(count+1)));
+	// Check for win/lose condition, call moveRedMarker() to continue game if win/lose condition not met.
+	if(count <= 1000000){ // Lose condition not yet met -> check for red win
+		if(redPosX != numCols-1 || redPosY != 0){ // Red win condition not yet met -> check for blue win
+			if(bluePosX != 0 || bluePosY != numRows-1){ // Blue win condition not yet met -> check player turn and move the next player
+				if(count%2 == 0){ // Red's turn
+					setTimeout(function(){ moveRedMarker(); },(runSpeed*count/(count+1)));
+				}
+				else{ // Blue's turn
+					setTimeout(function(){ moveBlueMarker(); },(runSpeed*count/(count+1)));
+				}
+			}
+		}
     }
 }// End updateBoard()
 // resetGame()
@@ -264,35 +340,34 @@ function updateBoard(){
 function resetGame(){
 // Variables
 
-// Current coordinates of the marker; one of these values will
+// Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
 redPosX = 0;
 redPosY = numCols-1;
-// Total number of moves taken; will increment by +1 each cycle.
-count = 0;
+
+// Current coordinates of the blue marker; one of these values will
+// change by an integer from [-2,2] each cycle (most commonly 0).
+var bluePosX = numRows-1;
+var bluePosY = 0;
+
+// Total number of total moves, red moves, and blue moves taken; will increment by +1 each cycle or colored cycle.
+var count = 0;
+var redCount = 0;
+var blueCount = 0;
+
 // Starting grid touch counts; one cell will increment by +1 each cycle.
-grid =		[
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
+var grid =	[
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			]
 // The current maximum number of times any given cell in the grid has been touched.
 max = 0;
 // The current minimum number of times any given cell in the grid has been touched.
