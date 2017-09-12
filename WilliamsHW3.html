@@ -46,7 +46,10 @@ Once the game ends, a winner (or lose condition) is determined, and game statist
 </br>
 <canvas id="gameBoard" width="0" height="0"></canvas>
 <p id="moveCount"></p>
+<p id="redMoveCount"></p>
+<p id="blueMoveCount"></p>
 <p id="redMarkerPosition"></p>
+<p id="blueMarkerPosition"></p>
 <p id="gameResult"></p>
 <p id="maxTouches"></p>
 <p id="minTouches"></p>
@@ -56,7 +59,7 @@ Once the game ends, a winner (or lose condition) is determined, and game statist
 // Variables
 var numRows = 10;
 var numCols = 10;
-var runSpeed = 250;
+var runSpeed = 25;
 // Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
 var redPosX = 0;
@@ -172,6 +175,10 @@ function drawRedMarker(){
 // Outputs: none
 function moveRedMarker(){
 	
+	 // Increment the counters
+    count++;
+	redCount++;
+	
     // STEP 1: Randomly assign 0, 1, 2, or 3 to direction; these will correspond to
 	// up, down, right, or left movement.
 	direction = Math.floor((Math.random()*4));
@@ -213,8 +220,6 @@ function moveRedMarker(){
 	
 	// Increment the touch count at the marker's current position on the grid.
 	grid[redPosX][redPosY]++;
-    // Increment the counter
-    count++;
     // Update the board and information
     updateBoard();
 }// End moveRedMarker()
@@ -234,6 +239,10 @@ function drawBlueMarker(){
 // Inputs: none
 // Outputs: none
 function moveBlueMarker(){
+	
+	// Increment the counters
+    count++;
+	blueCount++;
 	
     // STEP 1: Randomly assign 0, 1, 2, or 3 to direction; these will correspond to
 	// up, down, right, or left movement.
@@ -276,8 +285,7 @@ function moveBlueMarker(){
 	
 	// Increment the touch count at the marker's current position on the grid.
 	grid[bluePosX][bluePosY]++;
-    // Increment the counter
-    count++;
+    
     // Update the board and information
     updateBoard();
 }// End moveBlueMarker()
@@ -289,16 +297,35 @@ function moveBlueMarker(){
 function updateBoard(){
 	// Display the number of moves taken during this game.
 	document.getElementById("moveCount").innerHTML = "Number of moves taken: " + count;
+	
+	// Display the number of moves taken by the red marker during this game.
+	document.getElementById("redMoveCount").innerHTML = "Number of moves Red has taken: " + redCount;
+	
+	// Display the number of moves taken by the blue marker during this game.
+	document.getElementById("blueMoveCount").innerHTML = "Number of moves Blue has taken: " + blueCount;
+	
 	// Display the coordinates of the marker at the end of the game.
 	document.getElementById("redMarkerPosition").innerHTML = "Red marker position: (" + redPosX + ',' + redPosY + ')';
+	
+	// Display the coordinates of the marker at the end of the game.
+	document.getElementById("blueMarkerPosition").innerHTML = "Blue marker position: (" + bluePosX + ',' + bluePosY + ')';
+	
 	// Display "Red wins!" or "Blue wins!" or "No steps left!" depending on the end state of the game.
-	if(count <= 1000000 && redPosX == numCols-1 && redPosY == 0)
-	{
-		document.getElementById("gameResult").innerHTML = "Red wins!";
-	}
-	else if(count > 1000000)
+	
+	
+	if(count > 1000000)
 	{
 		document.getElementById("gameResult").innerHTML = "No steps left!";
+	}
+	else if(redPosX == numCols-1 && redPosY == 0)
+	{
+		document.getElementById("gameResult").innerHTML = "Red wins!";
+		redCount++;
+		blueCount--;
+	}
+	else if(bluePosX == 0 && bluePosY == numRows-1)
+	{
+		document.getElementById("gameResult").innerHTML = "Blue wins!";
 	}
 	else{
 		document.getElementById("gameResult").innerHTML = "Game in progress...";
