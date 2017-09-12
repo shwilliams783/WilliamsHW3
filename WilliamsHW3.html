@@ -39,6 +39,22 @@ one or the other piece reaches the corner opposite from where it started, or 1 m
 Any time a piece lands on its opponent, the opposing piece immediately returns to its starting space.
 Once the game ends, a winner (or lose condition) is determined, and game statistics are displayed.</p>
 
+<p>Choose a game speed (1 = Snail, 10 = Yackity Sax)</p>
+<select id="speedSelect">
+	<option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+</select>
+
+</br>
+</br>
 
 <button onClick="playGame()">Play the Game!</button>
 
@@ -54,20 +70,30 @@ Once the game ends, a winner (or lose condition) is determined, and game statist
 <p id="maxTouches"></p>
 <p id="minTouches"></p>
 <p id="averageTouches"></p>
+<p id="redStomps"></p>
+<p id="blueStomps"></p>
 
 <script>
 // Variables
+
+// Speed selection option from User.
+var speedSelect = document.getElementById("speedSelect");
+var speed = speedSelect.options[speedSelect.selectedIndex].text;
+console.log(speed);
+
+
 var numRows = 10;
 var numCols = 10;
-var runSpeed = 25;
+var runSpeed = 250/speed;
+console.log(runSpeed);
 // Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
 var redPosX = 0;
-var redPosY = numCols-1;
+var redPosY = numRows-1;
 
 // Current coordinates of the blue marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
-var bluePosX = numRows-1;
+var bluePosX = numCols-1;
 var bluePosY = 0;
 
 
@@ -75,6 +101,10 @@ var bluePosY = 0;
 var count = 0;
 var redCount = 0;
 var blueCount = 0;
+
+// Total number of times red has sent blue back home, and vice versa
+var redStomp = 0;
+var blueStomp = 0;
 
 // Starting grid touch counts; one cell will increment by +1 each cycle.
 var grid =	[
@@ -220,6 +250,13 @@ function moveRedMarker(){
 	
 	// Increment the touch count at the marker's current position on the grid.
 	grid[redPosX][redPosY]++;
+	
+	// Check if red has stomped on blue, sending it back to start and incrementing the stomp count.
+	if(redPosX == bluePosX && redPosY == bluePosY){
+		redStomp++;
+		goHomeBlue();
+	}
+	
     // Update the board and information
     updateBoard();
 }// End moveRedMarker()
@@ -285,6 +322,12 @@ function moveBlueMarker(){
 	
 	// Increment the touch count at the marker's current position on the grid.
 	grid[bluePosX][bluePosY]++;
+	
+	// Check if blue has stomped on red, sending it back to start and incrementing the stomp count.
+	if(redPosX == bluePosX && redPosY == bluePosY){
+		blueStomp++;
+		goHomeRed();
+	}
     
     // Update the board and information
     updateBoard();
@@ -341,6 +384,12 @@ function updateBoard(){
 	average = count/(numRows*numCols);
 	document.getElementById("averageTouches").innerHTML = "Each cell was visited an average of " + average + "times."; 
 	
+	// Display the number of times Red sent Blue home.
+	document.getElementById("redStomps").innerHTML = "Red sent Blue home " + redStomp + " times.";
+	
+	// Display the number of times Blue sent Red home.
+	document.getElementById("blueStomps").innerHTML = "Blue sent Red home " + blueStomp + " times.";
+	
 	//Update the game board graphics
     drawGrid(numRows, numCols);
 	drawRedMarker();
@@ -351,10 +400,10 @@ function updateBoard(){
 		if(redPosX != numCols-1 || redPosY != 0){ // Red win condition not yet met -> check for blue win
 			if(bluePosX != 0 || bluePosY != numRows-1){ // Blue win condition not yet met -> check player turn and move the next player
 				if(count%2 == 0){ // Red's turn
-					setTimeout(function(){ moveRedMarker(); },(runSpeed*count/(count+1)));
+					setTimeout(function(){ moveRedMarker(); },(runSpeed));
 				}
 				else{ // Blue's turn
-					setTimeout(function(){ moveBlueMarker(); },(runSpeed*count/(count+1)));
+					setTimeout(function(){ moveBlueMarker(); },(runSpeed));
 				}
 			}
 		}
@@ -367,20 +416,32 @@ function updateBoard(){
 function resetGame(){
 // Variables
 
+// Speed selection option from User.
+var speedSelect = document.getElementById("speedSelect");
+var speed = speedSelect.options[speedSelect.selectedIndex].text;
+console.log(speed);
+
+var runSpeed = 250/speed;
+console.log(runSpeed);
+
 // Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
-redPosX = 0;
-redPosY = numCols-1;
+var redPosX = 0;
+var redPosY = numRows-1;
 
 // Current coordinates of the blue marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
-var bluePosX = numRows-1;
+var bluePosX = numCols-1;
 var bluePosY = 0;
 
 // Total number of total moves, red moves, and blue moves taken; will increment by +1 each cycle or colored cycle.
 var count = 0;
 var redCount = 0;
 var blueCount = 0;
+
+// Total number of times red has sent blue back home, and vice versa
+var redStomp = 0;
+var blueStomp = 0;
 
 // Starting grid touch counts; one cell will increment by +1 each cycle.
 var grid =	[
@@ -453,6 +514,29 @@ function checkArray(){
 		
 	}
 }// End checkArray()
+
+// goHomeRed()
+// Purpose: This function moves the red marker back to (0,numRows-1).
+// 			This function is to be called when the blue marker	
+//			ends its move on the red marker, sending it back to start.
+// Inputs: none
+// Outputs: none
+function goHomeRed(){
+	redPosX = 0;
+	redPosY = numRows-1;
+}// End goHomeRed()
+
+// goHomeRed()
+// Purpose: This function moves the blue marker back to (numCols-1,0).
+// 			This function is to be called when the red marker	
+//			ends its move on the blue marker, sending it back to start.
+// Inputs: none
+// Outputs: none
+function goHomeBlue(){
+	bluePosX = numCols-1;
+	bluePosY = 0;
+}// End goHomeBlue()
+
 </script>
 
 </body>
