@@ -39,23 +39,6 @@ one or the other piece reaches the corner opposite from where it started, or 1 m
 Any time a piece lands on its opponent, the opposing piece immediately returns to its starting space.
 Once the game ends, a winner (or lose condition) is determined, and game statistics are displayed.</p>
 
-<p>Choose a game speed (1 = Snail, 10 = Yackity Sax)</p>
-<select id="speedSelect">
-	<option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-    <option value="7">7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-    <option value="10">10</option>
-</select>
-
-</br>
-</br>
-
 <button onClick="playGame()">Play the Game!</button>
 
 </br>
@@ -77,15 +60,11 @@ Once the game ends, a winner (or lose condition) is determined, and game statist
 // Variables
 
 // Speed selection option from User.
-var speedSelect = document.getElementById("speedSelect");
-var speed = speedSelect.options[speedSelect.selectedIndex].text;
-console.log(speed);
-
 
 var numRows = 10;
 var numCols = 10;
-var runSpeed = 250/speed;
-console.log(runSpeed);
+var runSpeed = 250;
+
 // Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
 var redPosX = 0;
@@ -416,13 +395,8 @@ function updateBoard(){
 function resetGame(){
 // Variables
 
-// Speed selection option from User.
-var speedSelect = document.getElementById("speedSelect");
-var speed = speedSelect.options[speedSelect.selectedIndex].text;
-console.log(speed);
 
-var runSpeed = 250/speed;
-console.log(runSpeed);
+var runSpeed = 250;
 
 // Current coordinates of the red marker; one of these values will
 // change by an integer from [-2,2] each cycle (most commonly 0).
